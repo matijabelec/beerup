@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  web:
+    image: nginx:1.15.5
+    ports:
+      - 8100:80
+    volumes:
+      - ./config/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./../project:/var/www/api
+    depends_on:
+      - php
+
+  php:
+    build: image/php
+    restart: always
+    volumes:
+      - ./../project:/var/www/api
