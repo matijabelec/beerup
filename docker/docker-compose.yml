@@ -16,3 +16,11 @@ services:
     restart: always
     volumes:
       - ./../project:/var/www/api
+    links:
+      - database
+
+  database:
+    image: mysql:8.0.12
+    restart: always
+    env_file:
+      - .env
