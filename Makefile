@@ -16,5 +16,8 @@ composer:
 	docker run --rm --interactive --tty --volume ${PWD}/project:/app \
 		composer:1.7.2 $(filter-out $@, $(MAKECMDGOALS)) --ignore-platform-reqs
 
+phpunit:
+	./docker/bin/phpunit $(filter-out $@, $(MAKECMDGOALS))
+
 %:
 	@true
