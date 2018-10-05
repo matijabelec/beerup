@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR=$(dirname "$0")
+FULLDIR=$PWD${BASEDIR#.}
+
+docker run --rm --interactive --tty --volume ${FULLDIR}/../../project:/app \
+		composer:1.7.2 "$@" --ignore-platform-reqs
