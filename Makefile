@@ -11,3 +11,6 @@ down:
 
 status:
 	cd docker && docker-compose ps
+
+analyse:
+	./docker/bin/phpstan analyse src tests
