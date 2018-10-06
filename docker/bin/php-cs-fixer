@@ -3,9 +3,5 @@
 set -e
 
 BASEDIR=$(dirname "$0")
-FULLDIR=$PWD${BASEDIR#.}
 
-docker run --rm --interactive --tty \
-    --user $(id -u):$(id -g) \
-    --volume ${FULLDIR}/../../project:/project \
-    herloct/php-cs-fixer fix "$@"
+cd "$BASEDIR/.." && docker-compose exec -T php vendor/bin/php-cs-fixer fix --allow-risky=yes "$@"

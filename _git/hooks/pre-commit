@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+BASEDIR=$(dirname "$0")
+
+for line in $(git status --porcelain | grep -e '^[AM]\(.*\).php$' | cut -c 3-)
+do
+    FILENAME=${line#project/}
+    ./${BASEDIR}/../../docker/bin/php-cs-fixer "$FILENAME"
+    git add "$line";
+done
