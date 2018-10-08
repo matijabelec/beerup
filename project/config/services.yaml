@@ -25,8 +25,22 @@ services:
         resource: '%kernel.project_dir%/src/Infrastructure'
         exclude: '%kernel.project_dir%/src/Infrastructure/Doctrine/Migrations'
 
-    Domain\Beer\Import\Repository\BeerRepositoryInterface:
-        alias: Infrastructure\Beer\Import\Repository\BeerRepository
+    Domain\User\UserRepositoryInterface:
+        alias: Infrastructure\User\UserRepository
 
-    Domain\Beer\Import\Repository\ExternalBeerRepositoryInterface:
-        alias: Infrastructure\Beer\Import\Repository\ExternalBeerRepository
+    Infrastructure\Response\ApiResponseFactory:
+        arguments:
+            -
+
+    Infrastructure\Response\ApiResponseSubscriber:
+        arguments:
+            $statuses:
+                1000: { title: 'Bad Request', status: 400 }
+
+    Infrastructure\Security\Jwt\TokenFactory:
+        arguments:
+            $privateKey: '%kernel.secret%'
+
+    Infrastructure\Security\Jwt\TokenVerifier:
+        arguments:
+            $privateKey: '%kernel.secret%'

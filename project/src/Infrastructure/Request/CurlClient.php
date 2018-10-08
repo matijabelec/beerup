@@ -7,7 +7,7 @@ namespace Infrastructure\Request;
 use Curl\Curl;
 use Exception;
 
-class CurlClient
+final class CurlClient implements ClientInterface
 {
     /**
      * @throws Exception on unsuccessful request

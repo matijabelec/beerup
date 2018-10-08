@@ -7,11 +7,14 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "curl/curl": "^1.9",
+        "lcobucci/jwt": "^3.2",
+        "sensio/framework-extra-bundle": "^5.2",
         "symfony/console": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
         "symfony/orm-pack": "^1.0",
         "symfony/phpunit-bridge": "*",
+        "symfony/security-bundle": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
