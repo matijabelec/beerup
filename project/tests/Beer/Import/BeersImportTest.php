@@ -2,9 +2,9 @@
 
 namespace Beer\Import;
 
-use Domain\Beer\Import\Exception\ExternalBeersWasNotReadable;
+use Domain\Beer\Import\ExternalBeerNotFoundException;
 use Exception;
-use Infrastructure\Request\CurlClient;
+use Infrastructure\Request\FakeClient;
 use Prophecy\Argument;
 use Symfony\Component\Console\Tester\CommandTester;
 use Tests\AbstractIntegrationTest;
@@ -12,23 +12,23 @@ use Tests\AbstractIntegrationTest;
 class BeersImportTest extends AbstractIntegrationTest
 {
     /**
-     * @dataProvider countProvider
+     * @dataProvider numberOfBeersProvider
      */
-    public function testWillFailOnInvalidArgumentPassed(int $count)
+    public function testWillFailOnInvalidArgumentPassed(int $numberOfBeers)
     {
-        $clientMock = $this->prophesize(CurlClient::class);
+        $clientMock = $this->prophesize(FakeClient::class);
         $clientMock->get(Argument::any())->willReturn('');
 
         $this->application->getKernel()
             ->getContainer()
-            ->set(CurlClient::class, $clientMock->reveal());
+            ->set(FakeClient::class, $clientMock->reveal());
 
         $command = $this->application->find('beers:import');
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
             'command' => $command->getName(),
-            'count' => $count,
+            'number-of-beers' => $numberOfBeers,
         ]);
 
         $this->assertEquals(1, $commandTester->getStatusCode());
@@ -40,18 +40,18 @@ class BeersImportTest extends AbstractIntegrationTest
     {
         $jsonResponse = file_get_contents(sprintf('%s/../../DataFixture/PunkApiBeers.json', __DIR__));
 
-        $clientMock = $this->prophesize(CurlClient::class);
+        $clientMock = $this->prophesize(FakeClient::class);
         $clientMock->get(Argument::any())->willReturn($jsonResponse);
 
         $this->application->getKernel()
             ->getContainer()
-            ->set(CurlClient::class, $clientMock->reveal());
+            ->set(FakeClient::class, $clientMock->reveal());
 
         $command = $this->application->find('beers:import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'count' => 3,
+            'number-of-beers' => 3,
         ]);
 
         $this->assertEquals(0, $commandTester->getStatusCode());
@@ -61,18 +61,18 @@ class BeersImportTest extends AbstractIntegrationTest
     {
         $jsonResponse = file_get_contents(sprintf('%s/../../DataFixture/PunkApiBeers.json', __DIR__));
 
-        $clientMock = $this->prophesize(CurlClient::class);
+        $clientMock = $this->prophesize(FakeClient::class);
         $clientMock->get(Argument::any())->willReturn($jsonResponse);
 
         $this->application->getKernel()
             ->getContainer()
-            ->set(CurlClient::class, $clientMock->reveal());
+            ->set(FakeClient::class, $clientMock->reveal());
 
         $command = $this->application->find('beers:import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'count' => 3,
+            'number-of-beers' => 3,
         ]);
 
         $this->assertEquals(0, $commandTester->getStatusCode());
@@ -81,7 +81,7 @@ class BeersImportTest extends AbstractIntegrationTest
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'count' => 3,
+            'number-of-beers' => 3,
         ]);
 
         $this->assertEquals(0, $commandTester->getStatusCode());
@@ -89,24 +89,24 @@ class BeersImportTest extends AbstractIntegrationTest
 
     public function testWillFailIfExternalServiceIsNotAvailable()
     {
-        $clientMock = $this->prophesize(CurlClient::class);
+        $clientMock = $this->prophesize(FakeClient::class);
         $clientMock->get(Argument::any())->willThrow(Exception::class);
 
         $this->application->getKernel()
             ->getContainer()
-            ->set(CurlClient::class, $clientMock->reveal());
+            ->set(FakeClient::class, $clientMock->reveal());
 
-        $this->expectException(ExternalBeersWasNotReadable::class);
+        $this->expectException(ExternalBeerNotFoundException::class);
 
         $command = $this->application->find('beers:import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command'  => $command->getName(),
-            'count' => 3,
+            'number-of-beers' => 3,
         ]);
     }
 
-    public function countProvider()
+    public function numberOfBeersProvider()
     {
         return [
             [ 0, ],

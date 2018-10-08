@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Domain\Beer\Import\Data;
+namespace Domain\Beer\Import;
 
-final class Beer
+final class ExternalBeer
 {
     /**
      * @var string

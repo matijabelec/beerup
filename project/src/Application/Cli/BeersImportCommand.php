@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Cli;
 
-use Domain\Beer\Import\BeerImporter;
+use Domain\Beer\Service\ImportBeerService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,16 +17,16 @@ final class BeersImportCommand extends Command
     private const COUNT_MAX = 50;
 
     /**
-     * @var BeerImporter
+     * @var ImportBeerService
      */
-    private $beerImporter;
+    private $importBeerService;
 
     public function __construct(
-        BeerImporter $beerImporter,
+        ImportBeerService $importBeerService,
         string $name = 'beers:import'
     ) {
         parent::__construct($name);
-        $this->beerImporter = $beerImporter;
+        $this->importBeerService = $importBeerService;
     }
 
     public function configure()
@@ -35,7 +35,7 @@ final class BeersImportCommand extends Command
 
         $this->setDescription('Import beers from external service');
         $this->addArgument(
-            'count',
+            'number-of-beers',
             InputArgument::REQUIRED,
             'Number of beers to import'
         );
@@ -43,12 +43,12 @@ final class BeersImportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $count = (int) $input->getArgument('count');
+        $numberOfBeers = (int) $input->getArgument('number-of-beers');
 
         if (
-            $count < self::COUNT_MIN
+            $numberOfBeers < self::COUNT_MIN
             ||
-            $count > self::COUNT_MAX
+            $numberOfBeers > self::COUNT_MAX
         ) {
             $output->writeln(
                 sprintf(
@@ -60,7 +60,7 @@ final class BeersImportCommand extends Command
             return 1;
         }
 
-        $this->beerImporter->import($count);
+        $this->importBeerService->import($numberOfBeers);
 
         return 0;
     }

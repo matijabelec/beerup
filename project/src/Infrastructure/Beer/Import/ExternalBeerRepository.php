@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Infrastructure\Beer\Import\Repository;
+namespace Infrastructure\Beer\Import;
 
-use Domain\Beer\Import\Data\Beer;
-use Domain\Beer\Import\Exception\ExternalBeersWasNotReadable;
-use Domain\Beer\Import\Repository\ExternalBeerRepositoryInterface;
+use Domain\Beer\Import\ExternalBeer;
+use Domain\Beer\Import\ExternalBeerNotFoundException;
+use Domain\Beer\Import\ExternalBeerRepositoryInterface;
 use Exception;
-use Infrastructure\Request\CurlClient;
+use Infrastructure\Request\ClientInterface;
 
 final class ExternalBeerRepository implements ExternalBeerRepositoryInterface
 {
     /**
-     * @var CurlClient
+     * @var ClientInterface
      */
     private $client;
 
@@ -23,23 +23,23 @@ final class ExternalBeerRepository implements ExternalBeerRepositoryInterface
     private $url = 'https://api.punkapi.com/v2/beers';
 
     public function __construct(
-        CurlClient $client
+        ClientInterface $client
     ) {
         $this->client = $client;
     }
 
     /**
-     * @return Beer[]
-     * @throws ExternalBeersWasNotReadable
+     * @return ExternalBeer[]
+     * @throws ExternalBeerNotFoundException
      */
-    public function find(int $count): array
+    public function fetch(int $numberOfBeers): array
     {
-        $url = sprintf('%s?per_page=%d', $this->url, $count);
+        $url = sprintf('%s?per_page=%d', $this->url, $numberOfBeers);
 
         try {
             $jsonResponse = $this->client->get($url);
         } catch (Exception $exception) {
-            throw new ExternalBeersWasNotReadable();
+            throw new ExternalBeerNotFoundException();
         }
 
         $items = json_decode($jsonResponse, true);
@@ -52,7 +52,7 @@ final class ExternalBeerRepository implements ExternalBeerRepositoryInterface
             $ibu = $item['ibu'] ?? null;
             $imageUrl = $item['image_url'] ?? null;
 
-            $beers[] = new Beer(
+            $beers[] = new ExternalBeer(
                 $name,
                 $description,
                 $abv,

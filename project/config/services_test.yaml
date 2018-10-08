@@ -11,5 +11,8 @@ services:
         autoconfigure: true
         public: false
 
-    Infrastructure\Request\CurlClient:
+    Infrastructure\Request\FakeClient:
         public: true
+
+    Infrastructure\Request\ClientInterface:
+        alias: Infrastructure\Request\FakeClient

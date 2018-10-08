@@ -28,14 +28,28 @@ services:
     Domain\User\UserRepositoryInterface:
         alias: Infrastructure\User\UserRepository
 
+    Domain\Beer\BeerRepositoryInterface:
+        alias: Infrastructure\Beer\BeerRepository
+
+    Domain\Beer\Browse\BrowseBeerRepositoryInterface:
+        alias: Infrastructure\Beer\BeerRepository
+
+    Domain\Beer\Import\ExternalBeerRepositoryInterface:
+        alias: Infrastructure\Beer\Import\ExternalBeerRepository
+
     Infrastructure\Response\ApiResponseFactory:
         arguments:
             -
+                'Domain\Beer\Beer': 'Application\Resource\BeerResource'
+                'Application\Security\Jwt\Token': 'Application\Resource\TokenResource'
 
     Infrastructure\Response\ApiResponseSubscriber:
         arguments:
             $statuses:
                 1000: { title: 'Bad Request', status: 400 }
+                1: { title: 'Not Found', status: 404 }
+                2: { title: 'Unprocessable Entity', status: 422 }
+                3: { title: 'Conflict', status: 409 }
 
     Infrastructure\Security\Jwt\TokenFactory:
         arguments:
