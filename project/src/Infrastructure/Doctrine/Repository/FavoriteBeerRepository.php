@@ -4,6 +4,7 @@ namespace Infrastructure\Doctrine\Repository;
 
 use Infrastructure\Doctrine\Entity\FavoriteBeer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Infrastructure\Doctrine\Entity\User;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,32 +20,18 @@ class FavoriteBeerRepository extends ServiceEntityRepository
         parent::__construct($registry, FavoriteBeer::class);
     }
 
-//    /**
-//     * @return FavoriteBeer[] Returns an array of FavoriteBeer objects
-//     */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return FavoriteBeer[]
+     */
+    public function findByUserIdOrderedByTimeAddedDesc(int $userId): array
     {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
+        $user = $this->getEntityManager()->getReference(User::class, $userId);
+        return $this->createQueryBuilder('fb')
+            ->andWhere('fb.user = :user')
+            ->leftJoin('fb.beer', 'b')
+            ->setParameter('user', $user)
+            ->orderBy('fb.timeAdded', 'DESC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?FavoriteBeer
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

@@ -13,4 +13,11 @@ interface BrowseBeerRepositoryInterface
         OrderByField $orderByField,
         PageId $pageId
     ): array;
+
+    /**
+     * @return Beer[]
+     */
+    public function browseFavoritedBeers(
+        UserId $userId
+    ): array;
 }

@@ -13,9 +13,11 @@ use Domain\Beer\BeerRepositoryInterface;
 use Domain\Beer\Browse\BrowseBeerRepositoryInterface;
 use Domain\Beer\Browse\OrderByField;
 use Domain\Beer\Browse\PageId;
+use Domain\Beer\Browse\UserId;
 use Domain\Beer\DuplicatedBeerWasNotCreatedException;
 use Infrastructure\Doctrine\Entity\Beer as BeerEntity;
 use Infrastructure\Doctrine\Repository\BeerRepository as DoctrineBeerRepository;
+use Infrastructure\Doctrine\Repository\FavoriteBeerRepository as DoctrineFavoriteBeerRepository;
 
 class BeerRepository implements
     BeerRepositoryInterface,
@@ -31,12 +33,19 @@ class BeerRepository implements
      */
     private $beerRepository;
 
+    /**
+     * @var DoctrineFavoriteBeerRepository
+     */
+    private $favoriteBeerRepository;
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        DoctrineBeerRepository $beerRepository
+        DoctrineBeerRepository $beerRepository,
+        DoctrineFavoriteBeerRepository $favoriteBeerRepository
     ) {
         $this->entityManager = $entityManager;
         $this->beerRepository = $beerRepository;
+        $this->favoriteBeerRepository = $favoriteBeerRepository;
     }
 
     /**
@@ -162,6 +171,32 @@ class BeerRepository implements
 
         $beers = [];
         foreach ($beerEntites as $beerEntity) {
+            $beers[] = new Beer(
+                new BeerId($beerEntity->getId()),
+                new BeerData(
+                    $beerEntity->getName(),
+                    $beerEntity->getDescription(),
+                    $beerEntity->getAbv(),
+                    $beerEntity->getIbu(),
+                    $beerEntity->getImageUrl()
+                )
+            );
+        }
+
+        return $beers;
+    }
+
+    /**
+     * @return Beer[]
+     */
+    public function browseFavoritedBeers(
+        UserId $userId
+    ): array {
+        $favoriteBeerEntities = $this->favoriteBeerRepository->findByUserIdOrderedByTimeAddedDesc($userId->getId());
+
+        $beers = [];
+        foreach ($favoriteBeerEntities as $favoriteBeerEntity) {
+            $beerEntity = $favoriteBeerEntity->getBeer();
             $beers[] = new Beer(
                 new BeerId($beerEntity->getId()),
                 new BeerData(

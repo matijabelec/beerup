@@ -34,6 +34,9 @@ services:
     Domain\Beer\Browse\BrowseBeerRepositoryInterface:
         alias: Infrastructure\Beer\BeerRepository
 
+    Domain\Beer\FavoriteBeer\FavoriteBeerRepositoryInterface:
+        alias: Infrastructure\Beer\FavoriteBeerRepository
+
     Domain\Beer\Import\ExternalBeerRepositoryInterface:
         alias: Infrastructure\Beer\Import\ExternalBeerRepository
 

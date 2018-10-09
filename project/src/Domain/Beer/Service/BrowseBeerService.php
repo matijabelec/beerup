@@ -8,6 +8,7 @@ use Domain\Beer\Beer;
 use Domain\Beer\Browse\BrowseBeerRepositoryInterface;
 use Domain\Beer\Browse\OrderByField;
 use Domain\Beer\Browse\PageId;
+use Domain\Beer\Browse\UserId;
 
 final class BrowseBeerService
 {
@@ -30,5 +31,14 @@ final class BrowseBeerService
         PageId $pageId
     ): array {
         return $this->browseBeerRepository->browse($orderByField, $pageId);
+    }
+
+    /**
+     * @return Beer[]
+     */
+    public function browseFavoriteBeers(
+        UserId $userId
+    ): array {
+        return $this->browseBeerRepository->browseFavoritedBeers($userId);
     }
 }
