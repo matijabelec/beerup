@@ -146,7 +146,31 @@ Response (204)
 
 **DELETE /beers/{id}**
 Response (204)
-  
+
+## Favorite beers
+
+### Fetch collection of favorite beers
+
+**GET /favorite-beers**
+
+### Add favorite beer
+
+**Post /favorite-beers/{id}**
+Request:
+```json
+{
+    "data": {
+        "beer_id": 3
+    }
+}
+```
+Response (204)
+
+### Remove favorite beer
+
+**DELETE /favorite-beers/{id}**
+Response (204)
+
 ## CLI
 
 ### Import beers
