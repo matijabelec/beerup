@@ -58,3 +58,6 @@ services:
     Infrastructure\Security\Jwt\TokenVerifier:
         arguments:
             $privateKey: '%kernel.secret%'
+
+    Infrastructure\Request\ClientInterface:
+        alias: Infrastructure\Request\CurlClient
