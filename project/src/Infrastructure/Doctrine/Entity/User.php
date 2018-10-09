@@ -2,6 +2,8 @@
 
 namespace Infrastructure\Doctrine\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,6 +23,16 @@ class User
      */
     private $username;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Infrastructure\Doctrine\Entity\FavoriteBeer", mappedBy="user")
+     */
+    private $favoriteBeers;
+
+    public function __construct()
+    {
+        $this->favoriteBeers = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -36,5 +48,13 @@ class User
         $this->username = $username;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|FavoriteBeer[]
+     */
+    public function getFavoriteBeers(): Collection
+    {
+        return $this->getFavoriteBeers();
     }
 }

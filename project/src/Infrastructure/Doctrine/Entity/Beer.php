@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Infrastructure\Doctrine\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -42,6 +44,16 @@ class Beer
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $imageUrl;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Infrastructure\Doctrine\Entity\FavoriteBeer", mappedBy="beer")
+     */
+    private $favoriteBeers;
+
+    public function __construct()
+    {
+        $this->favoriteBeers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -106,5 +118,13 @@ class Beer
         $this->imageUrl = $imageUrl;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|FavoriteBeer[]
+     */
+    public function getFavoriteBeers(): Collection
+    {
+        return $this->getFavoriteBeers();
     }
 }
