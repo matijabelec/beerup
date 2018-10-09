@@ -29,7 +29,7 @@ final class TokenResource implements ResourceInterface
         return '0';
     }
 
-    public function getAttributes(): array
+    public function getAttributes(array $fields = []): array
     {
         return [
             'token' => $this->token->getEncoded(),

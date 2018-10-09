@@ -29,15 +29,25 @@ final class BeerResource implements ResourceInterface
         return (string) $this->beer->getBeerId()->getId();
     }
 
-    public function getAttributes(): array
+    public function getAttributes(array $fields = []): array
     {
         $beerData = $this->beer->getBeerData();
-        return [
+        $attributes = [
             'name' => $beerData->getName(),
             'description' => $beerData->getDescription(),
             'abv' => $beerData->getAbv(),
             'ibu' => $beerData->getIbu(),
             'image_url' => $beerData->getImageUrl(),
         ];
+
+        $attributes = array_filter(
+            $attributes,
+            function ($key) use ($fields) {
+                return in_array($key, $fields, true);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
+
+        return $attributes;
     }
 }

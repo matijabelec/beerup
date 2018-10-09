@@ -26,12 +26,14 @@ final class ApiResponseFactory
 
     /**
      * @param mixed $resource
+     * @param string[] $fields
      */
     public function createResourceResponse(
-        $resource
+        $resource,
+        array $fields = []
     ): JsonResponse {
         $document = [
-            'data' => $this->encode($resource),
+            'data' => $this->encode($resource, $fields),
         ];
 
         return new JsonResponse($document);
@@ -57,14 +59,17 @@ final class ApiResponseFactory
 
     /**
      * @param mixed $resource
+     * @param string[] $fields
      * @return mixed
      */
-    private function encode($resource)
-    {
+    private function encode(
+        $resource,
+        array $fields = []
+    ) {
         if (is_array($resource)) {
             $collection = [];
             foreach ($resource as $res) {
-                $collection[] = $this->encode($res);
+                $collection[] = $this->encode($res, $fields);
             }
 
             return $collection;
@@ -72,18 +77,23 @@ final class ApiResponseFactory
 
         if (true === isset($this->resourceMap[get_class($resource)])) {
             $resourceClass = $this->resourceMap[get_class($resource)];
-            return $this->createResource(new $resourceClass($resource));
+            return $this->createResource(new $resourceClass($resource), $fields);
         }
 
         throw new LogicException('Resource does not exist');
     }
 
-    private function createResource(ResourceInterface $resource): array
-    {
+    /**
+     * @param string[] $fields
+     */
+    private function createResource(
+        ResourceInterface $resource,
+        array $fields = []
+    ): array {
         return [
             'type' => $resource->getType(),
             'id' => $resource->getId(),
-            'attributes' => $resource->getAttributes(),
+            'attributes' => $resource->getAttributes($fields),
         ];
     }
 }

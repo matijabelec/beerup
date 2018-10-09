@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Infrastructure\Response;
 
+use Application\Response\Response;
 use Application\Security\UnauthorizedException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,7 +47,15 @@ final class ApiResponseSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $response = $this->apiResponseFactory->createResourceResponse($controllerResult);
+        $resource = $controllerResult;
+        $fields = [];
+
+        if ($controllerResult instanceof Response) {
+            $resource = $controllerResult->getResource();
+            $fields = $controllerResult->getFields();
+        }
+
+        $response = $this->apiResponseFactory->createResourceResponse($resource, $fields);
 
         $event->setResponse($response);
     }

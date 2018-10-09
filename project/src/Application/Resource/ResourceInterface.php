@@ -10,6 +10,7 @@ interface ResourceInterface
 
     /**
      * Return attributes with their values
+     * @param string[] $fileds
      */
-    public function getAttributes(): array;
+    public function getAttributes(array $fields = []): array;
 }
