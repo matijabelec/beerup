@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Infrastructure\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Domain\User\Browse\BrowseUserRepositoryInterface;
 use Domain\User\User;
 use Domain\User\UserData;
 use Domain\User\UserId;
 use Domain\User\UserNotFoundException;
 use Domain\User\UserRepositoryInterface;
-use Infrastructure\Doctrine\Entity\User as UserEntity;
 use Infrastructure\Doctrine\Repository\UserRepository as DoctrineUserRepository;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository implements
+    UserRepositoryInterface,
+    BrowseUserRepositoryInterface
 {
     /**
      * @var EntityManagerInterface
@@ -54,5 +56,25 @@ class UserRepository implements UserRepositoryInterface
         );
 
         return $user;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function browse(): array
+    {
+        $userEntities = $this->userRepository->findAll();
+
+        $users = [];
+        foreach ($userEntities as $userEntity) {
+            $users[] = new User(
+                new UserId($userEntity->getId()),
+                new UserData(
+                    $userEntity->getUsername()
+                )
+            );
+        }
+
+        return $users;
     }
 }

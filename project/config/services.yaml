@@ -28,6 +28,9 @@ services:
     Domain\User\UserRepositoryInterface:
         alias: Infrastructure\User\UserRepository
 
+    Domain\User\Browse\BrowseUserRepositoryInterface:
+        alias: Infrastructure\User\UserRepository
+
     Domain\Beer\BeerRepositoryInterface:
         alias: Infrastructure\Beer\BeerRepository
 
@@ -45,6 +48,7 @@ services:
             -
                 'Domain\Beer\Beer': 'Application\Resource\BeerResource'
                 'Application\Security\Jwt\Token': 'Application\Resource\TokenResource'
+                'Domain\User\User': 'Application\Resource\UserResource'
 
     Infrastructure\Response\ApiResponseSubscriber:
         arguments:

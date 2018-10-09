@@ -7,7 +7,7 @@ namespace Application\Http;
 use Application\JsonApiControllerInterface;
 use Application\Security\Gate;
 use Application\TokenAuthenticatedControllerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Domain\User\Service\BrowseUserService;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -22,8 +22,10 @@ final class UsersController implements
      */
     public function collection(
         Gate $gate,
-        Request $request
+        BrowseUserService $browseUserService
     ) {
         $gate->validatePermissions('ROLE_ADMIN');
+
+        return $browseUserService->browse();
     }
 }
