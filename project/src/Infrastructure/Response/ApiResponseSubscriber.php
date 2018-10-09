@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Infrastructure\Response;
 
+use Application\Security\UnauthorizedException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -35,6 +38,11 @@ final class ApiResponseSubscriber implements EventSubscriberInterface
     {
         $controllerResult = $event->getControllerResult();
 
+        if (true === empty($controllerResult)) {
+            $event->setResponse(new JsonResponse(null, 204));
+            return;
+        }
+
         $response = $this->apiResponseFactory->createResourceResponse($controllerResult);
 
         $event->setResponse($response);
@@ -48,7 +56,7 @@ final class ApiResponseSubscriber implements EventSubscriberInterface
             case ($exception instanceof NotFoundHttpException):
                 return;
             case ($exception instanceof AccessDeniedHttpException):
-                return;
+                $exception = new UnauthorizedException();
         }
 
         $code = $exception->getCode();

@@ -59,6 +59,10 @@ final class TokenSubscriber implements EventSubscriberInterface
 
             $token = $this->tokenParser->parse($tokenPayload);
 
+            $userId = $token->getUserId();
+            $event->getRequest()->attributes->set('_auth.role', $userId === 0 ? 'ROLE_ADMIN' : 'ROLE_USER');
+            $event->getRequest()->attributes->set('_auth.userId', $userId);
+
             if (false === $this->tokenVerifier->verify($token)) {
                 throw new AccessDeniedHttpException('Token is invalid!');
             }
