@@ -7,6 +7,7 @@ namespace Application\Http;
 use Application\JsonApiControllerInterface;
 use Application\Request\RequestContentValidator;
 use Application\Response\Response;
+use Application\Security\Gate;
 use Application\TokenAuthenticatedControllerInterface;
 use Domain\Beer\Beer;
 use Domain\Beer\BeerId;
@@ -40,15 +41,26 @@ final class BeersController implements
      * @return Beer[]
      */
     public function collection(
+        Gate $gate,
         BrowseBeerService $browseBeerService,
         Request $request
     ): Response {
-        $orderByField = (string) $request->query->get('orderBy', 'id');
         $page = (int) $request->query->get('page', 1);
+        $orderByField = (string) $request->query->get('orderBy', 'id');
+        if (
+            'favorite_count' === ltrim($orderByField, '-')
+            &&
+            'ROLE_ADMIN' !== $gate->getAuthRole()
+        ) {
+            $orderByField = 'id';
+        }
 
         $beers = $browseBeerService->browse(new OrderByField($orderByField), new PageId($page));
-        $fields = array_unique([ 'name', 'abv', 'ibu', ltrim($orderByField, '-'), ]);
-        return new Response($beers, $fields);
+        $fields = [ 'name', 'abv', 'ibu', ltrim($orderByField, '-'), ];
+        if ('ROLE_ADMIN' === $gate->getAuthRole()) {
+            $fields[] = 'favorite_count';
+        }
+        return new Response($beers, array_unique($fields));
     }
 
     /**

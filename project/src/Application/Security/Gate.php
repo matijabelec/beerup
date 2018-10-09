@@ -50,4 +50,11 @@ final class Gate
 
         return $request->attributes->get('_auth.userId', null);
     }
+
+    public function getAuthRole(): ?string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return $request->attributes->get('_auth.role', null);
+    }
 }

@@ -48,6 +48,10 @@ final class BeerResource implements ResourceInterface
             ARRAY_FILTER_USE_KEY
         );
 
+        if (in_array('favorite_count', $fields, true)) {
+            $attributes['favorite_count'] = $this->beer->getBeerStatsData()->getFavoriteCount();
+        }
+
         return $attributes;
     }
 }

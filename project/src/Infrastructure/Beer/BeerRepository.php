@@ -10,6 +10,7 @@ use Domain\Beer\BeerData;
 use Domain\Beer\BeerId;
 use Domain\Beer\BeerNotFoundException;
 use Domain\Beer\BeerRepositoryInterface;
+use Domain\Beer\BeerStatsData;
 use Domain\Beer\Browse\BrowseBeerRepositoryInterface;
 use Domain\Beer\Browse\OrderByField;
 use Domain\Beer\Browse\PageId;
@@ -70,7 +71,8 @@ class BeerRepository implements
                 $beerEntity->getAbv(),
                 $beerEntity->getIbu(),
                 $beerEntity->getImageUrl()
-            )
+            ),
+            new BeerStatsData(0)
         );
 
         return $beer;
@@ -165,12 +167,20 @@ class BeerRepository implements
         $currentPage = $pageId->getId() - 1;
         $offset = $currentPage * $perPage;
 
-        $beerEntites = $this->beerRepository->findBy([], [
-            $orderByField->getField() => $orderByField->getOrder()
-        ], $perPage, $offset);
+        $results = $this->beerRepository->findWithFavoriteCount(
+            $orderByField->getField(),
+            $orderByField->getOrder(),
+            $perPage,
+            $offset
+        );
 
         $beers = [];
-        foreach ($beerEntites as $beerEntity) {
+        foreach ($results as $result) {
+            [
+                0 => $beerEntity,
+                'favorite_count' => $favoriteCount
+            ] = $result;
+
             $beers[] = new Beer(
                 new BeerId($beerEntity->getId()),
                 new BeerData(
@@ -179,7 +189,8 @@ class BeerRepository implements
                     $beerEntity->getAbv(),
                     $beerEntity->getIbu(),
                     $beerEntity->getImageUrl()
-                )
+                ),
+                new BeerStatsData((int) $favoriteCount)
             );
         }
 
@@ -205,7 +216,8 @@ class BeerRepository implements
                     $beerEntity->getAbv(),
                     $beerEntity->getIbu(),
                     $beerEntity->getImageUrl()
-                )
+                ),
+                new BeerStatsData(0)
             );
         }
 

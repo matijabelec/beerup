@@ -16,12 +16,19 @@ final class Beer
      */
     private $beerData;
 
+    /**
+     * @var BeerStatsData
+     */
+    private $beerStatsData;
+
     public function __construct(
         BeerId $beerId,
-        BeerData $beerData
+        BeerData $beerData,
+        BeerStatsData $beerStatsData
     ) {
         $this->beerId = $beerId;
         $this->beerData = $beerData;
+        $this->beerStatsData = $beerStatsData;
     }
 
     public function getBeerId(): BeerId
@@ -32,5 +39,10 @@ final class Beer
     public function getBeerData(): BeerData
     {
         return $this->beerData;
+    }
+
+    public function getBeerStatsData(): BeerStatsData
+    {
+        return $this->beerStatsData;
     }
 }

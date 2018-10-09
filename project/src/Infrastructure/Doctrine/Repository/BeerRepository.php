@@ -21,32 +21,27 @@ class BeerRepository extends ServiceEntityRepository
         parent::__construct($registry, Beer::class);
     }
 
-//    /**
-//     * @return Beer[] Returns an array of Beer objects
-//     */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+    /**
+     * @return array [Beer, 'feature_count']
+     */
+    public function findWithFavoriteCount(
+        string $field,
+        string $order,
+        int $perPage,
+        int $offset
+    ): array {
+        if ($field !== 'favorite_count') {
+            $field = sprintf('b.%s', $field);
+        }
 
-    /*
-    public function findOneBySomeField($value): ?Beer
-    {
         return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
+            ->select('b, COUNT(fb.id) as favorite_count')
+            ->leftJoin('b.favoriteBeers', 'fb', 'WITH', 'b.id = fb.beer')
+            ->orderBy($field, $order)
+            ->setFirstResult($offset)
+            ->setMaxResults($perPage)
+            ->groupBy('b.id')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
 }
