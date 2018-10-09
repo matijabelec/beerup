@@ -8,9 +8,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Domain\User\Browse\BrowseUserRepositoryInterface;
 use Domain\User\User;
 use Domain\User\UserData;
+use Domain\User\UserFavoriteBeers;
 use Domain\User\UserId;
 use Domain\User\UserNotFoundException;
 use Domain\User\UserRepositoryInterface;
+use Infrastructure\Doctrine\Repository\FavoriteBeerRepository;
 use Infrastructure\Doctrine\Repository\UserRepository as DoctrineUserRepository;
 
 class UserRepository implements
@@ -27,12 +29,19 @@ class UserRepository implements
      */
     private $userRepository;
 
+    /**
+     * @var FavoriteBeerRepository
+     */
+    private $favoriteBeerRepository;
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        DoctrineUserRepository $userRepository
+        DoctrineUserRepository $userRepository,
+        FavoriteBeerRepository $favoriteBeerRepository
     ) {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
+        $this->favoriteBeerRepository = $favoriteBeerRepository;
     }
 
     public function fetchByUsername(
@@ -52,7 +61,8 @@ class UserRepository implements
             new UserId($userEntity->getId()),
             new UserData(
                 $userEntity->getUsername()
-            )
+            ),
+            new UserFavoriteBeers([])
         );
 
         return $user;
@@ -64,14 +74,22 @@ class UserRepository implements
     public function browse(): array
     {
         $userEntities = $this->userRepository->findAll();
+        $results = $this->favoriteBeerRepository->findAllFavoriteBeerNamesPerUsers();
+
+        $map = [];
+        foreach ($results as $result) {
+            $map[$result['user_id']][] = $result['beer_name'];
+        }
 
         $users = [];
         foreach ($userEntities as $userEntity) {
+            $userId = $userEntity->getId();
             $users[] = new User(
-                new UserId($userEntity->getId()),
+                new UserId($userId),
                 new UserData(
                     $userEntity->getUsername()
-                )
+                ),
+                new UserFavoriteBeers($map[$userId] ?? [])
             );
         }
 

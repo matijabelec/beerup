@@ -16,12 +16,19 @@ final class User
      */
     private $userData;
 
+    /**
+     * @var UserFavoriteBeers
+     */
+    private $userFavoriteBeers;
+
     public function __construct(
         UserId $userId,
-        UserData $userData
+        UserData $userData,
+        UserFavoriteBeers $userFavoriteBeers
     ) {
         $this->userId = $userId;
         $this->userData = $userData;
+        $this->userFavoriteBeers = $userFavoriteBeers;
     }
 
     public function getUserId(): UserId
@@ -32,5 +39,10 @@ final class User
     public function getUserData(): UserData
     {
         return $this->userData;
+    }
+
+    public function getUserFavoriteBeers(): UserFavoriteBeers
+    {
+        return $this->userFavoriteBeers;
     }
 }

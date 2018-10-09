@@ -32,8 +32,10 @@ final class UserResource implements ResourceInterface
     public function getAttributes(array $fields = []): array
     {
         $userData = $this->user->getUserData();
+        $favoriteBeers = $this->user->getUserFavoriteBeers();
         $attributes = [
             'username' => $userData->getUsername(),
+            'favorite_beers' => implode(',', $favoriteBeers->getBeerNames())
         ];
 
         return $attributes;

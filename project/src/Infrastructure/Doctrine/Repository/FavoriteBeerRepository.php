@@ -34,4 +34,18 @@ class FavoriteBeerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array [user_id, beer_name]
+     */
+    public function findAllFavoriteBeerNamesPerUsers(): array
+    {
+        return $this->createQueryBuilder('fb')
+            ->select('u.id as user_id, b.name as beer_name')
+            ->join('fb.user', 'u')
+            ->leftJoin('fb.beer', 'b')
+            ->groupBy('u.id, b.name')
+            ->getQuery()
+            ->getResult();
+    }
 }
