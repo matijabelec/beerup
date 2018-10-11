@@ -1,5 +1,8 @@
 <?php
 
+
+declare(strict_types=1);
+
 namespace Infrastructure\Security\Jwt;
 
 use Application\Security\Jwt\Token;

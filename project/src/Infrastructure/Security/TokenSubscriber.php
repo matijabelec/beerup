@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Infrastructure\Security;
 
-use Application\JsonApiControllerInterface;
 use Application\TokenAuthenticatedControllerInterface;
 use Infrastructure\Security\Jwt\TokenParser;
 use Infrastructure\Security\Jwt\TokenVerifier;
@@ -25,6 +24,7 @@ final class TokenSubscriber implements EventSubscriberInterface
      * @var TokenVerifier
      */
     private $tokenVerifier;
+
     /**
      * @var Security
      */

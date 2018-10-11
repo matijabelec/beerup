@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Infrastructure\Security\Jwt;
 
 use Application\Security\Jwt\Token;
@@ -14,10 +16,17 @@ final class TokenVerifier
      */
     private $privateKey;
 
+    /**
+     * @var string
+     */
+    private $host;
+
     public function __construct(
-        string $privateKey
+        string $privateKey,
+        string $host
     ) {
         $this->privateKey = $privateKey;
+        $this->host = $host;
     }
 
     public function verify(Token $token): bool
@@ -32,9 +41,8 @@ final class TokenVerifier
         }
 
         $data = new ValidationData(); // It will use the current time to validate (iat, nbf and exp)
-        $data->setIssuer('http://api.loc');
-        $data->setAudience('http://api.loc');
-        $data->setId('aa1g23e123a');
+        $data->setIssuer($this->host);
+        $data->setAudience($this->host);
 
         return $token->validate($data);
     }

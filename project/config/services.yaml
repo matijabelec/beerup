@@ -62,10 +62,12 @@ services:
     Infrastructure\Security\Jwt\TokenFactory:
         arguments:
             $privateKey: '%kernel.secret%'
+            $host: 'http://api.loc'
 
     Infrastructure\Security\Jwt\TokenVerifier:
         arguments:
             $privateKey: '%kernel.secret%'
+            $host: 'http://api.loc'
 
     Infrastructure\Request\ClientInterface:
         alias: Infrastructure\Request\CurlClient

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Infrastructure\Security\Jwt;
 
 use Application\Security\Jwt\Token;
@@ -13,10 +15,17 @@ final class TokenFactory
      */
     private $privateKey;
 
+    /**
+     * @var string
+     */
+    private $host;
+
     public function __construct(
-        string $privateKey
+        string $privateKey,
+        string $host
     ) {
         $this->privateKey = $privateKey;
+        $this->host = $host;
     }
 
     public function create(int $userId): Token
@@ -24,9 +33,8 @@ final class TokenFactory
         $signer = new Sha256();
         $builder = new Builder();
 
-        $token = $builder->setIssuer('http://api.loc')
-            ->setAudience('http://api.loc')
-            ->setId('aa1g23e123a', true)
+        $token = $builder->setIssuer($this->host)
+            ->setAudience($this->host)
             ->setIssuedAt(time())
             ->setNotBefore(time() + 1)
             ->setExpiration(time() + 1800)
