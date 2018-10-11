@@ -14,6 +14,7 @@ use Domain\Beer\BeerStatsData;
 use Domain\Beer\Browse\BrowseBeerRepositoryInterface;
 use Domain\Beer\Browse\OrderByField;
 use Domain\Beer\Browse\PageId;
+use Domain\Beer\Browse\SearchTerm;
 use Domain\Beer\Browse\UserId;
 use Domain\Beer\DuplicatedBeerWasNotCreatedException;
 use Infrastructure\Doctrine\Entity\Beer as BeerEntity;
@@ -160,7 +161,8 @@ class BeerRepository implements
      */
     public function browse(
         OrderByField $orderByField,
-        PageId $pageId
+        PageId $pageId,
+        SearchTerm $searchTerm
     ): array {
         $perPage = 20;
 
@@ -170,6 +172,7 @@ class BeerRepository implements
         $results = $this->beerRepository->findWithFavoriteCount(
             $orderByField->getField(),
             $orderByField->getOrder(),
+            $searchTerm->getTerm(),
             $perPage,
             $offset
         );

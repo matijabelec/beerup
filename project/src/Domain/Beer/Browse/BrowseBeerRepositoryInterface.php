@@ -11,7 +11,8 @@ interface BrowseBeerRepositoryInterface
      */
     public function browse(
         OrderByField $orderByField,
-        PageId $pageId
+        PageId $pageId,
+        SearchTerm $searchTerm
     ): array;
 
     /**

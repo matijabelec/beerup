@@ -9,6 +9,7 @@ use Domain\Beer\Browse\BrowseBeerRepositoryInterface;
 use Domain\Beer\Browse\OrderByField;
 use Domain\Beer\Browse\PageId;
 use Domain\Beer\Browse\UserId;
+use Domain\Beer\Browse\SearchTerm;
 
 final class BrowseBeerService
 {
@@ -28,9 +29,10 @@ final class BrowseBeerService
      */
     public function browse(
         OrderByField $orderByField,
-        PageId $pageId
+        PageId $pageId,
+        SearchTerm $searchTerm
     ): array {
-        return $this->browseBeerRepository->browse($orderByField, $pageId);
+        return $this->browseBeerRepository->browse($orderByField, $pageId, $searchTerm);
     }
 
     /**

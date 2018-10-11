@@ -27,6 +27,7 @@ class BeerRepository extends ServiceEntityRepository
     public function findWithFavoriteCount(
         string $field,
         string $order,
+        string $searchTerm,
         int $perPage,
         int $offset
     ): array {
@@ -34,14 +35,35 @@ class BeerRepository extends ServiceEntityRepository
             $field = sprintf('b.%s', $field);
         }
 
-        return $this->createQueryBuilder('b')
+        $qb = $this->createQueryBuilder('b')
             ->select('b, COUNT(fb.id) as favorite_count')
             ->leftJoin('b.favoriteBeers', 'fb', 'WITH', 'b.id = fb.beer')
             ->orderBy($field, $order)
             ->setFirstResult($offset)
             ->setMaxResults($perPage)
-            ->groupBy('b.id')
-            ->getQuery()
+            ->groupBy('b.id');
+
+        if ('' !== $searchTerm) {
+            $searchTerm = sprintf(
+                '%%%s%%',
+                preg_replace('/[^a-zA-Z0-9\.\*\+\\n|#;:!"%@{} _-]/', '', $searchTerm)
+            );
+
+            $qb->having('b.name LIKE :name')
+                ->orHaving('b.description LIKE :description')
+                ->orHaving('b.abv LIKE :abv')
+                ->orHaving('b.ibu LIKE :ibu')
+                ->orHaving('b.imageUrl LIKE :image_url')
+                ->setParameters([
+                    'name' => $searchTerm,
+                    'description' => $searchTerm,
+                    'abv' => $searchTerm,
+                    'ibu' => $searchTerm,
+                    'image_url' => $searchTerm,
+                ]);
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 }

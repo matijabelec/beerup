@@ -13,6 +13,7 @@ use Domain\Beer\Beer;
 use Domain\Beer\BeerId;
 use Domain\Beer\Browse\OrderByField;
 use Domain\Beer\Browse\PageId;
+use Domain\Beer\Browse\SearchTerm;
 use Domain\Beer\Service\BeerDetailService;
 use Domain\Beer\Service\BrowseBeerService;
 use Domain\Beer\Service\RemoveBeerService;
@@ -46,6 +47,7 @@ final class BeersController implements
         Request $request
     ): Response {
         $page = (int) $request->query->get('page', 1);
+        $searchTerm = (string) $request->query->get('searchTerm', '');
         $orderByField = (string) $request->query->get('orderBy', 'id');
         if (
             'favorite_count' === ltrim($orderByField, '-')
@@ -55,7 +57,12 @@ final class BeersController implements
             $orderByField = 'id';
         }
 
-        $beers = $browseBeerService->browse(new OrderByField($orderByField), new PageId($page));
+        $beers = $browseBeerService->browse(
+            new OrderByField($orderByField),
+            new PageId($page),
+            new SearchTerm($searchTerm)
+        );
+
         $fields = [ 'name', 'abv', 'ibu', ltrim($orderByField, '-'), ];
         if ('ROLE_ADMIN' === $gate->getAuthRole()) {
             $fields[] = 'favorite_count';

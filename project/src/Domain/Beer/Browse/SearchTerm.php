@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domain\Beer\Search;
+namespace Domain\Beer\Browse;
 
 final class SearchTerm
 {
